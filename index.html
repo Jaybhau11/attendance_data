@@ -190,7 +190,7 @@
     <br />
     <button onclick="markAttendance()">Mark Attendance</button>
     
-    <!-- Attendance Table -->
+    <!-- Attendance Table (UI only, extra columns not shown) -->
     <table>
       <thead>
         <tr>
@@ -213,6 +213,7 @@
   <script>
     let loginType = "";
     let serialNo = 1;
+    let loggedInUser = ""; // To store the login ID of the authenticated user
     
     // Mentor-Student Mapping (updated with provided values)
     const mentorStudents = {
@@ -263,6 +264,7 @@
       let validUsers = loginType === "faculty" ? facultyUsers : adminUsers;
       
       if (validUsers[loginId] && validUsers[loginId] === password) {
+        loggedInUser = loginId; // Store the logged in user ID
         document.getElementById("loginSection").style.display = "none";
         document.getElementById("attendanceSection").style.display = "block";
       } else {
@@ -277,6 +279,15 @@
       let mmm = today.toLocaleString("en-US", { month: "short" });
       let yy = today.getFullYear().toString().substr(2, 2);
       return `${dd}-${mmm}-${yy}`;
+    }
+    
+    // Format current time as "HH:MM:SS"
+    function getFormattedTime() {
+      let now = new Date();
+      let hh = String(now.getHours()).padStart(2, "0");
+      let mm = String(now.getMinutes()).padStart(2, "0");
+      let ss = String(now.getSeconds()).padStart(2, "0");
+      return `${hh}:${mm}:${ss}`;
     }
     
     // Update the Student Name dropdown based on the selected mentor
@@ -393,7 +404,9 @@
       
       let table = document.getElementById("attendanceList");
       let rows = table.getElementsByTagName("tr");
-      let csvContent = "Sr. No.,Date,Time Slot,Subject,Faculty Name,Division,Mentor Name,Student Name\n";
+      // Include two extra columns in the CSV header
+      let csvContent = "Sr. No.,Date,Time Slot,Subject,Faculty Name,Division,Mentor Name,Student Name,Time of data updated,Login_ID\n";
+      let currentTime = getFormattedTime(); // current time for download
       
       for (let i = 0; i < rows.length; i++) {
         let cells = rows[i].getElementsByTagName("td");
@@ -405,7 +418,9 @@
                         cells[4].innerText + "," +
                         cells[5].innerText + "," +
                         cells[6].innerText + "," +
-                        cells[7].innerText + "\n";
+                        cells[7].innerText + "," +
+                        currentTime + "," +
+                        loggedInUser + "\n";
         }
       }
       
