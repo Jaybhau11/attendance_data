@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Attendance Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 50px;
+    }
+    /* TABLE STYLING */
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    thead th {
+      background-color: #4F81BD;
+      color: #fff;
+      font-weight: bold;
+      border: 1px solid #4F81BD;
+      padding: 8px;
+      text-align: center;
+    }
+    tbody td {
+      border: 1px solid #4F81BD;
+      padding: 8px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    tbody tr:hover {
+      background-color: #dae3f3;
+    }
+    /* BUTTON STYLING */
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .deleteBtn {
+      background-color: #ff4d4d;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    /* LOGIN FIELDS */
+    #loginFields {
+      display: none;
+    }
+    /* DROPDOWN STYLING */
+    select {
+      margin: 5px;
+      padding: 8px;
+      border: 1px solid #4F81BD;
+      background-color: #E7EEF8;
+      color: #333;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      min-width: 180px;
+    }
+    select:hover {
+      background-color: #dae3f3;
+    }
+    select:focus {
+      outline: none;
+      box-shadow: 0 0 3px #4F81BD;
+    }
+    /* INPUT FIELDS */
+    input[type="text"],
+    input[type="password"] {
+      margin: 5px;
+      padding: 8px;
+      border: 1px solid #4F81BD;
+      border-radius: 4px;
+      background-color: #E7EEF8;
+      color: #333;
+      font-size: 14px;
+      width: 200px;
+    }
+    input[type="text"]:hover,
+    input[type="password"]:hover {
+      background-color: #dae3f3;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      box-shadow: 0 0 3px #4F81BD;
+    }
+  </style>
+</head>
+<body>
+  <h2>ATTENDANCE TRACKER</h2>
+  <div id="loginSection">
+    <h3>Login as:</h3>
+    <button onclick="setLoginType('admin')">Login as Admin</button>
+    <button onclick="setLoginType('faculty')">Login as Faculty</button>
+    <br /><br />
+    <div id="loginFields">
+      <input type="text" id="loginId" placeholder="Enter Login ID" />
+      <input type="password" id="password" placeholder="Enter Password" />
+      <button onclick="validateLogin()">Login</button>
+    </div>
+  </div>
+  
+  <div id="attendanceSection" style="display: none;">
+    <!-- Mentor Dropdown -->
+    <select id="mentor" onchange="updateStudentDropdown()">
+      <option value="" disabled selected>Select Mentor Name</option>
+      <option value="Dr. Varada Inamdar">Dr. Varada Inamdar</option>
+      <option value="Prof. Sameer Patil">Prof. Sameer Patil</option>
+      <option value="Dr. Bhagyashri Patil">Dr. Bhagyashri Patil</option>
+      <option value="Prof. Shweta Singh">Prof. Shweta Singh</option>
+      <option value="Prof. Sankhadeep Sarkar">Prof. Sankhadeep Sarkar</option>
+      <option value="Prof. Satyajit Ingwale">Prof. Satyajit Ingwale</option>
+      <option value="Dr. Amit Medhekar">Dr. Amit Medhekar</option>
+      <option value="Prof. Vinayak Shitole">Prof. Vinayak Shitole</option>
+      <option value="Prof. Tabrej Mulla">Prof. Tabrej Mulla</option>
+      <option value="Prof. Priyanka Jadhav">Prof. Priyanka Jadhav</option>
+      <option value="Dr. Pooja Nikhar">Dr. Pooja Nikhar</option>
+      <option value="Dr. Shrikant Waghulkar">Dr. Shrikant Waghulkar</option>
+      <option value="Prof. Ankita Naik">Prof. Ankita Naik</option>
+    </select>
+    
+    <!-- Student Name Dropdown (Dependent) -->
+    <select id="studentName">
+      <option value="" disabled selected>Select Student Name</option>
+    </select>
+    
+    <!-- Faculty Dropdown -->
+    <select id="faculty">
+      <option value="" disabled selected>Select Faculty Name</option>
+      <option value="Dr. Varada Inamdar">Dr. Varada Inamdar</option>
+      <option value="Prof. Sameer Patil">Prof. Sameer Patil</option>
+      <option value="Dr. Bhagyashri Patil">Dr. Bhagyashri Patil</option>
+      <option value="Prof. Shweta Singh">Prof. Shweta Singh</option>
+      <option value="Prof. Sankhadeep Sarkar">Prof. Sankhadeep Sarkar</option>
+      <option value="Prof. Satyajit Ingwale">Prof. Satyajit Ingwale</option>
+      <option value="Dr. Amit Medhekar">Dr. Amit Medhekar</option>
+      <option value="Prof. Vinayak Shitole">Prof. Vinayak Shitole</option>
+      <option value="Prof. Tabrej Mulla">Prof. Tabrej Mulla</option>
+      <option value="Prof. Priyanka Jadhav">Prof. Priyanka Jadhav</option>
+      <option value="Dr. Pooja Nikhar">Dr. Pooja Nikhar</option>
+      <option value="Dr. Shrikant Waghulkar">Dr. Shrikant Waghulkar</option>
+      <option value="Prof. Ankita Naik">Prof. Ankita Naik</option>
+    </select>
+    
+    <!-- Division Dropdown -->
+    <select id="division">
+      <option value="" disabled selected>Select Division</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+      <option value="E">E</option>
+      <option value="F">F</option>
+    </select>
+    
+    <!-- Subject Dropdown -->
+    <select id="subject">
+      <option value="Subject_1">Subject_1</option>
+      <option value="Subject_2">Subject_2</option>
+      <option value="Subject_3">Subject_3</option>
+      <option value="Subject_4">Subject_4</option>
+      <option value="Subject_5">Subject_5</option>
+      <option value="Subject_6">Subject_6</option>
+      <option value="Subject_7">Subject_7</option>
+      <option value="Subject_8">Subject_8</option>
+      <option value="Subject_9">Subject_9</option>
+      <option value="Subject_10">Subject_10</option>
+    </select>
+    
+    <!-- Time Slot Dropdown -->
+    <select id="timeSlot">
+      <option value="08:30 - 09:30">08:30 - 09:30</option>
+      <option value="09:40 - 10:40">09:40 - 10:40</option>
+      <option value="10:50 - 11:50">10:50 - 11:50</option>
+      <option value="12:00 - 13:00">12:00 - 13:00</option>
+      <option value="14:00 - 15:00">14:00 - 15:00</option>
+      <option value="15:10 - 16:10">15:10 - 16:10</option>
+      <option value="16:20 - 17:20">16:20 - 17:20</option>
+      <option value="17:30 - 18:30">17:30 - 18:30</option>
+    </select>
+    
+    <br />
+    <button onclick="markAttendance()">Mark Attendance</button>
+    
+    <!-- Attendance Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>Date</th>
+          <th>Time Slot</th>
+          <th>Subject</th>
+          <th>Faculty Name</th>
+          <th>Division</th>
+          <th>Mentor Name</th>
+          <th>Student Name</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="attendanceList"></tbody>
+    </table>
+    <button onclick="downloadCSV()">Submit & Download CSV</button>
+  </div>
+  
+  <script>
+    let loginType = "";
+    let serialNo = 1;
+    
+    // Mentor-Student Mapping (updated with provided values)
+    const mentorStudents = {
+      "Dr. Varada Inamdar": ["Samar Arun Veer","Ingale Kaushal Kakasaheb","Vishal Singh","Jugal Mistry","Tanu Gulati","Krusnapriya Sahoo","Kriti Kumari","Baljit Singh","Harshita Pardeshi","S.A.Sakshi","Bhushan Chaudhari","Arin Sahu","Gayatri Gadage","Vaishanavi Pujari","Sekhar Singh","Subhadip Saha","Sairaj Jadhav","Tarushi Jain","Ganesh Sanjay Ghadge","Parth Upadhyay","bhavika bewal","Ayush Naidu","Aditya Chouhan","Devansh Jain","Simran Narayani","Anushka Patil","Tanay Hire"],
+      "Prof. Sameer Patil": ["Sameer Ukay","Himanshi Patidar","Ishika Sharma","Anshul Gupta","Kopal Tamrakar","Manjeet","Saee Repal","Harshita Jonwal","Debasis Dalapati","Ajay Kumar Yadav","Swayam Upadhyay","Adarsh Raj","Abhishek Rajpurohit","Chetna Verma","Ritika Thakur","Fayzan Hussain","Ishika Bansal","Sakshi Bhaje","Akshata Sambrani","Harshvardhan Singh","Saksham Dhasmana","Divya Chohi","Aakansha Dhase","Tushar Dattatray Kalekar","Divya Panjwani","shivani Singh","Amaan khan","Gehana Varty","Ashwin Nair","Chhavi Tripathi","Ojas Patil","Kashish Jaiswal (Frirst Day- New Student"],
+      "Dr. Bhagyashri Patil": ["Vinay Gurjar","Suvi Pandey","Vanshika Goyal","Daniel Bhandari","Yash lamb","Ambika Rastogi","Vaidehi Manoj Rawal","Ayush Punikar","Prathamesh Gorakh more","Sanika gharat","Brajesh kumar","Prakhar jaiswal","Sakshi Patil","Ananya Das","siddhant Jangjod","Hitesh Sonawane","Kunal Sagar Shinde","Akshit Pritam Parkar","Oshina mittal","Shruti Anand","Mansi Gautam Bhoyar","Kamanashish Ghosh","Mayuresh Dhengle","Mohammad Arafath","Vinayak Dhananjay Marathe","Pratiksha Kumbhar","Pravin Ingole","Vaishnavi Shelke","Prasad Dabhad","Vedant Fengse"],
+      "Prof. Shweta Singh": ["Kadivar Shashank Kamleshbhai","Sakshi Kumari","Yogesh Ghuge","Aditya Aman","Mamta Kumari","Rashmi Rani","Harsh Mehar","V. Isha","Muskaan","Khushi Mishra","Muskan Mishra","Pratik Bhojane","Kahani Jain","Maithili Mahendra Mudholkar","Raavi Bhuyar","Jasmine Maurya","Vishaka Sharma","Runal Randive","Deepti Singh","Yash Goel","Ketan Patel","PRIANSHU AWASTHI","Sakshi Lengole","Prajakta gami","Gauri R Heggadi","Anupma Singh","harshita sharma","Palak Gupta"],
+      "Prof. Sankhadeep Sarkar": ["Saurabh Rajendra Durugkar","Vaishnavi Katkar","Divya Suryawanshi","Vedanti Hemant Tekade","Lavkush Kumar","Krupal Adavadkar","Naincy Jain","Sujal Malkar","Adarsh","Golu Kumar Thakur","Sumit Mukati","Abhinav gawande","Jatin Mali","Yuvraj singh Chouhan","Ashish Pal","Srushti Paratwar","Pratik Godase","Prathmesh Patil","Prathmesh Sanjay Chavan","Anujay Kumar Jar","Anirudh singh Thakur","Gourangi Singh","Saksham Patil"],
+      "Prof. Satyajit Ingwale": ["Nivedita Das","Selphine Lopes","Asha Singh","Pranay Kadam","Harsh Talesara","Sapna Gupta","Rajat Gupta","P Mohnish Kumar","Payal Barnwal","Yash Rakesh Satkar","Sanchari Mandal","Kamala Kumari","Muskan Maheshwari","Khushi Jagale","Vedant Sudhir Bhongade","Shahabaz Walikar","Sachin Biradar","Anil Kumar Awati","Tejas sandbhor","Jaydeep Chavan","Gyanendu Chaitanya","Samiksha Sanjay Kshirsagar","Kangkana Choudhury","Sachin Singh","Muskan Hasim Khwaza","Mukul Rajput","Harshal wadyalkar","Kunal Gajbhiye","Tanisha Rathi","Vinay"],
+      "Dr. Amit Medhekar": ["Naveenkumar Huagar","Aparna Tripathi","Mamta Nitin Mahtole","Chhotu Kumar","Mansi Mankar","Divya Iyer","Ganesh Pokharkar","Anam Iqbal","Kriti Jain","Vishakha Patil","Astha Omprakash Nerkar","Shoaib Akhtar","Disha Mohan Sheware","Rishav Sharma","Prince Singh","Sakshi Agrawal","Utkarsh chaturvedi","Ananya kumari","Sneha kumari","Sakshi survase","Lajjita Dilip Bhalekar","Shubham Raut","krishna Ahirrao","Prajwal Deshmukh"],
+      "Prof. Vinayak Shitole": ["Sagar Zope","Pratik Munde","Ayush Sonar","Shejal Vaigankar","Ankit jha","Siddhi DeepaK Kumbhar","Akshay Tanwar","Sarvesh Shukla","Aditya Raj","Suryansh Singh Tomar","Mukesh Suthar","Kunal Vasant Hatkar","Gautam Prakash","Vats Sukhadiya","Nisha Subhash Sawat","Bhupen Ingale","Yash Kulthe","Rohit Tandle","Gaikawad Hemant Ravindra","Rashmi Singh","Anuja chandu bawanwade","Supriya Pawar","Komal Waghmare","Aastha Pandey","shivani Pawar","Shriti More","Suyash Sunil Kakade","Shashwat Pandey","Siddhant Mane","Patil Nayan"],
+      "Prof. Tabrej Mulla": ["Ranvir Haridas Tekam","Yogesh Patel","Pavan borade","Yash Dhanraj Mohture","Nikit Thakare","Vaishnvai Digambar Khachane","Yuvraj singh","Yashwardhan sen","Priyanka Jaybhay","Navya Kotur","Shivaleela birajdar","Ansh Shukla","Vidya tathe","Kanishka Pal","Vaishnavi Deshmukh","Omkar Deshmankar","Tanishka Bajpai","Asmita Shende","Tushar Shekapure","Somnath Gaikwad","Sarthak Khot","Rohit Singh","Shrushti Kolekar"],
+      "Prof. Priyanka Jadhav": ["Mayuri Bhoyar","Devesh Bisht","Sakshi Mane","Neha Gupta","Sakshi Kodli","Deji Kumari Das","Nayan","Disha Mandal","Atul Patil","Priyansh Gupta","Balaji Bhosale","Tanmay patidar","Akshata bacche","Ritika ramane","Khushi Singh","Mayur patil","Tejas Kamal Nayan Bulbule","Shruti amol Mane","Diksha Kundwani","Lukesh Mahajan","Pratiksha Danole","Kshushi Prakash","Ankita Patil","Kunal sanjay Sarotte","Riya Kunkal"],
+      "Dr. Pooja Nikhar": ["Kunal patil","Yash Jayesh Kamble","Aarya Shrotriya","Prathamesh Rajendra Tanpure","tejas more","Vaibhavi Vinod Rathor","Shirish Sukhadeve","Ujjawal Mourya","Sakshi Vijay Lembhe","Saniya Bongale","Abhishek anand","Sanket Soma Kapgate","Jitesh Pawar","Digvijay Bhalekar","Aditya Rathore","Sudarshan mukunda Khairnar","Krutika Krushna Sarwade","Tejas Budhanawar","Ranaware Sanskruti Umesh","Vishakha Das","gayatri sawale","Parth Sutar","Yash Kushare","Hariom Yaldewar","Aadesh Gaigawali","Suraj Ilamkar"],
+      "Dr. Shrikant Waghulkar": ["Yash Kharjul","Sakshi Sanjay Shirsath","Lobhas Kokate","nakshatra hasare","ankit suryawanshi","neha budruk","Rohit Murlidhar Mali","Sanket Arjun Chitte","Aditya Dubey","Vaibhav Shinde","Gyan gaurav","Nirmaljyoth Ashwani Auluck","Goldy Roy","Iebad Shaikh","sudarshan kapse","Yash birhade","Onkar Yadav","Ravi Bhikaji Sangale","Rutik Kote","Lokesh Nemade","Krishn Mundada","Vedant Asodekar","Vaishnavi Virale","Rani Singh","Vaishnavi Patil","Md Shahid","Rahul Payghan","Pranav Phale","Rahul Kokate","Jogeshwari Sopan Hole"],
+      "Prof. Ankita Naik": ["Snehal Todkar","Sanchita Rajkumar Ghangale","Rupali nayak","Vaidayee Bode","Vanshika singh","Atharv Jagtap","Sanjana Manoj Kapse","Shraddha Patil","Milind Patil","Prathwiraj Sanjay Shinde","kshitija VinodRao kadam","Aniket Sah","adarsh gour","Ashish Sunil Paithane","Neelam Rajesh Bhosale","Anita Giri","Shipali Arvind Nandeshwar","nilima kakde","Sarthak Kothari","Shubham More","Vinaya Lokhande","Vaishnav Tadas","Jyoti Salunkhe","Depak Kore","Pravin Pawar","Manjiri","Pramod Adkine","Rahul Ranjan"]
+    };
+    
+    // Login Users
+    const facultyUsers = {
+      "User_Name1": "Password1",
+      "User_Name2": "Password2",
+      "User_Name3": "Password3",
+      "User_Name4": "Password4",
+      "User_Name5": "Password5",
+      "User_Name6": "Password6",
+      "User_Name7": "Password7",
+      "User_Name8": "Password8",
+      "User_Name9": "Password9",
+      "User_Name10": "Password10"
+    };
+    const adminUsers = {
+      "Admin_Name1": "Password1",
+      "Admin_Name2": "Password2",
+      "Admin_Name3": "Password3",
+      "Admin_Name4": "Password4",
+      "Admin_Name5": "Password5"
+    };
+    
+    function setLoginType(type) {
+      loginType = type;
+      document.getElementById("loginFields").style.display = "block";
+    }
+    
+    function validateLogin() {
+      let loginId = document.getElementById("loginId").value;
+      let password = document.getElementById("password").value;
+      let validUsers = loginType === "faculty" ? facultyUsers : adminUsers;
+      
+      if (validUsers[loginId] && validUsers[loginId] === password) {
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("attendanceSection").style.display = "block";
+      } else {
+        alert("Invalid login credentials.");
+      }
+    }
+    
+    // Format today's date as "dd-mmm-yy"
+    function getFormattedDate() {
+      let today = new Date();
+      let dd = String(today.getDate()).padStart(2, "0");
+      let mmm = today.toLocaleString("en-US", { month: "short" });
+      let yy = today.getFullYear().toString().substr(2, 2);
+      return `${dd}-${mmm}-${yy}`;
+    }
+    
+    // Update the Student Name dropdown based on the selected mentor
+    function updateStudentDropdown() {
+      let mentorDropdown = document.getElementById("mentor");
+      let studentDropdown = document.getElementById("studentName");
+      let selectedMentor = mentorDropdown.value;
+      
+      studentDropdown.innerHTML = '<option value="" disabled selected>Select Student Name</option>';
+      
+      if (mentorStudents[selectedMentor]) {
+        mentorStudents[selectedMentor].forEach(student => {
+          let option = document.createElement("option");
+          option.value = student;
+          option.text = student;
+          studentDropdown.appendChild(option);
+        });
+      }
+    }
+    
+    function markAttendance() {
+      let studentName = document.getElementById("studentName").value;
+      let faculty = document.getElementById("faculty").value;
+      let mentor = document.getElementById("mentor").value;
+      let division = document.getElementById("division").value;
+      let subject = document.getElementById("subject").value;
+      let timeSlot = document.getElementById("timeSlot").value;
+      
+      if (!studentName) {
+        alert("Please select a student name.");
+        return;
+      }
+      if (!faculty) {
+        alert("Please select a faculty name.");
+        return;
+      }
+      if (!mentor) {
+        alert("Please select a mentor name.");
+        return;
+      }
+      if (!division) {
+        alert("Please select a division.");
+        return;
+      }
+      
+      let formattedDate = getFormattedDate();
+      let table = document.getElementById("attendanceList");
+      let rows = table.getElementsByTagName("tr");
+      
+      // Duplicate check
+      for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName("td");
+        if (cells.length >= 8) {
+          if (
+            cells[1].innerText === formattedDate &&
+            cells[2].innerText === timeSlot &&
+            cells[3].innerText === subject &&
+            cells[4].innerText === faculty &&
+            cells[5].innerText === division &&
+            cells[6].innerText === mentor &&
+            cells[7].innerText === studentName
+          ) {
+            alert("Student Data Already Exist");
+            return;
+          }
+        }
+      }
+      
+      let row = table.insertRow();
+      let cell1 = row.insertCell(0);
+      let cell2 = row.insertCell(1);
+      let cell3 = row.insertCell(2);
+      let cell4 = row.insertCell(3);
+      let cell5 = row.insertCell(4);
+      let cell6 = row.insertCell(5);
+      let cell7 = row.insertCell(6);
+      let cell8 = row.insertCell(7);
+      let cell9 = row.insertCell(8);
+      
+      cell1.innerHTML = serialNo;
+      cell2.innerHTML = formattedDate;
+      cell3.innerHTML = timeSlot;
+      cell4.innerHTML = subject;
+      cell5.innerHTML = faculty;
+      cell6.innerHTML = division;
+      cell7.innerHTML = mentor;
+      cell8.innerHTML = studentName;
+      cell9.innerHTML = '<button class="deleteBtn" onclick="deleteRow(this)">-</button>';
+      
+      serialNo++;
+      document.getElementById("studentName").selectedIndex = 0;
+    }
+    
+    function deleteRow(button) {
+      let row = button.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+      updateSerialNumbers();
+    }
+    
+    function updateSerialNumbers() {
+      let table = document.getElementById("attendanceList");
+      let rows = table.getElementsByTagName("tr");
+      for (let i = 0; i < rows.length; i++) {
+        rows[i].cells[0].innerText = i + 1;
+      }
+      serialNo = rows.length + 1;
+    }
+    
+    function downloadCSV() {
+      // Display confirmation alert
+      if (!confirm("Do you want to continue and submit")) {
+        return;
+      }
+      
+      let table = document.getElementById("attendanceList");
+      let rows = table.getElementsByTagName("tr");
+      let csvContent = "Sr. No.,Date,Time Slot,Subject,Faculty Name,Division,Mentor Name,Student Name\n";
+      
+      for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName("td");
+        if (cells.length > 0) {
+          csvContent += cells[0].innerText + "," +
+                        cells[1].innerText + "," +
+                        cells[2].innerText + "," +
+                        cells[3].innerText + "," +
+                        cells[4].innerText + "," +
+                        cells[5].innerText + "," +
+                        cells[6].innerText + "," +
+                        cells[7].innerText + "\n";
+        }
+      }
+      
+      let blob = new Blob([csvContent], { type: "text/csv" });
+      let link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "attendance.csv";
+      link.click();
+    }
+  </script>
+</body>
+</html>
